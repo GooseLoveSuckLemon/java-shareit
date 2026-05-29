@@ -4,16 +4,18 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
 
 import java.util.List;
-
 
 @Slf4j
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
 public class ItemController {
+
     private final ItemService itemService;
     private static final String SHARER_USER_ID = "X-Sharer-User-Id";
 
@@ -33,20 +35,29 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getById(@PathVariable Long itemId) {
-        log.info("GET /items/{} - получение вещи", itemId);
-        return itemService.getItemById(itemId);
+    public ItemWithBookingsDto getById(@RequestHeader(SHARER_USER_ID) Long userId,
+                                       @PathVariable Long itemId) {
+        log.info("GET /items/{} - получение вещи пользователем {}", itemId, userId);
+        return itemService.getItemWithBookingsAndComments(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getByOwner(@RequestHeader(SHARER_USER_ID) Long ownerId) {
+    public List<ItemWithBookingsDto> getByOwner(@RequestHeader(SHARER_USER_ID) Long ownerId) {
         log.info("GET /items - получение всех вещей владельца {}", ownerId);
-        return itemService.getItemsByOwner(ownerId);
+        return itemService.getItemsWithBookingsAndCommentsByOwner(ownerId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam String text) {
         log.info("GET /items/search?text={} - поиск вещей", text);
         return itemService.searchAvailableItems(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader(SHARER_USER_ID) Long userId,
+                                 @PathVariable Long itemId,
+                                 @Valid @RequestBody CommentDto commentDto) {
+        log.info("POST /items/{}/comment - добавление комментария пользователем {}", itemId, userId);
+        return itemService.addComment(userId, itemId, commentDto);
     }
 }

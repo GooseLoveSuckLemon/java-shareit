@@ -12,30 +12,39 @@ import java.util.Map;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler({MethodArgumentNotValidException.class})
+    @ExceptionHandler({MethodArgumentNotValidException.class, BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException e) {
-        return Map.of("error", "Validation failed");
+    public Map<String, String> handleBadRequest(Exception e) {
+        return Map.of("error", e.getMessage());
     }
 
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
-        return Map.of("error", "Invalid parameter: " + e.getName());
+        return Map.of("error", "Unknown state: " + e.getValue());
     }
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleNotFound(RuntimeException e) {
-        if (e.getMessage().contains("уже существует")) {
-            return Map.of("error", e.getMessage());
-        }
+    public Map<String, String> handleNotFound(NotFoundException e) {
+        return Map.of("error", e.getMessage());
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public Map<String, String> handleForbidden(ForbiddenException e) {
         return Map.of("error", e.getMessage());
     }
 
     @ExceptionHandler(DuplicateEmailException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleDuplicateEmail(DuplicateEmailException e) {
+        return Map.of("error", e.getMessage());
+    }
+
+    @ExceptionHandler(UnsupportedStateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleUnsupportedState(UnsupportedStateException e) {
         return Map.of("error", e.getMessage());
     }
 
