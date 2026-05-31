@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.Comment.CommentRepository;
+import ru.practicum.shareit.item.dto.BookingShortDto;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
@@ -103,8 +104,8 @@ public class ItemServiceImpl implements ItemService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        ItemWithBookingsDto.BookingShortDto lastBooking = null;
-        ItemWithBookingsDto.BookingShortDto nextBooking = null;
+        BookingShortDto lastBooking = null;
+        BookingShortDto nextBooking = null;
 
         if (item.getOwner().equals(userId)) {
             lastBooking = bookingRepository
@@ -145,12 +146,12 @@ public class ItemServiceImpl implements ItemService {
 
         return itemRepository.findByOwnerOrderByIdAsc(ownerId).stream()
                 .map(item -> {
-                    ItemWithBookingsDto.BookingShortDto lastBooking = bookingRepository
+                    BookingShortDto lastBooking = bookingRepository
                             .findFirstByItemIdAndStartBeforeAndStatusOrderByStartDesc(item.getId(), now, BookingStatus.APPROVED)
                             .map(this::mapToBookingShortDto)
                             .orElse(null);
 
-                    ItemWithBookingsDto.BookingShortDto nextBooking = bookingRepository
+                    BookingShortDto nextBooking = bookingRepository
                             .findFirstByItemIdAndStartAfterAndStatusOrderByStartAsc(item.getId(), now, BookingStatus.APPROVED)
                             .map(this::mapToBookingShortDto)
                             .orElse(null);
@@ -205,8 +206,8 @@ public class ItemServiceImpl implements ItemService {
         return commentMapper.toCommentDto(savedComment);
     }
 
-    private ItemWithBookingsDto.BookingShortDto mapToBookingShortDto(Booking booking) {
-        ItemWithBookingsDto.BookingShortDto dto = new ItemWithBookingsDto.BookingShortDto();
+    private BookingShortDto mapToBookingShortDto(Booking booking) {
+        BookingShortDto dto = new BookingShortDto();
         dto.setId(booking.getId());
         dto.setBookerId(booking.getBooker().getId());
         dto.setBookerName(booking.getBooker().getName());
