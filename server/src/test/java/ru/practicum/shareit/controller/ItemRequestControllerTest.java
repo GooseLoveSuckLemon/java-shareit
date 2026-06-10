@@ -11,7 +11,9 @@ import ru.practicum.shareit.request.ItemRequestController;
 import ru.practicum.shareit.request.ItemRequestService;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
+
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -97,34 +99,6 @@ class ItemRequestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.description").value("Need a drill"));
-    }
-
-    @Test
-    void createRequest_ShouldReturnCreatedRequest() throws Exception {
-        ItemRequestDto inputDto = new ItemRequestDto();
-        inputDto.setDescription("Need a drill");
-
-        ItemRequestDto outputDto = new ItemRequestDto();
-        outputDto.setId(1L);
-        outputDto.setDescription("Need a drill");
-
-        when(requestService.createRequest(eq(1L), any(ItemRequestDto.class))).thenReturn(outputDto);
-
-        mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(inputDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1));
-    }
-
-    @Test
-    void getOwnRequests_ShouldReturnList() throws Exception {
-        when(requestService.getOwnRequests(1L)).thenReturn(Collections.emptyList());
-
-        mockMvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", 1))
-                .andExpect(status().isOk());
     }
 
     @Test
