@@ -106,4 +106,61 @@ class BookingControllerTest {
                         .param("approved", "true"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void createBooking_WithValidData_ShouldReturnOk() throws Exception {
+        BookItemRequestDto dto = new BookItemRequestDto(
+                1L,
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(2)
+        );
+        String json = objectMapper.writeValueAsString(dto);
+
+        mockMvc.perform(post("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllBookings_WithFutureState_ShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "FUTURE"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllBookings_WithPastState_ShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "PAST"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllBookings_WithCurrentState_ShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "CURRENT"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllBookings_WithWaitingState_ShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "WAITING"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllBookings_WithRejectedState_ShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "REJECTED"))
+                .andExpect(status().isOk());
+    }
+
 }

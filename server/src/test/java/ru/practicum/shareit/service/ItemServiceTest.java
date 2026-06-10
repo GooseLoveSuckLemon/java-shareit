@@ -18,6 +18,7 @@ import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -137,6 +138,68 @@ class ItemServiceTest {
     @Test
     void searchAvailableItems_ShouldReturnEmpty_WhenTextIsBlank() {
         var result = itemService.searchAvailableItems("");
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void getItemById_WhenItemExists_ShouldReturnItem() {
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(testItem));
+        when(itemMapper.toItemDto(testItem)).thenReturn(testItemDto);
+
+        ItemDto result = itemService.getItemById(1L);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void getItemById_WhenItemNotFound_ShouldThrowException() {
+        when(itemRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> itemService.getItemById(99L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("не найдена");
+    }
+
+    @Test
+    void getItemsByOwner_WhenOwnerExists_ShouldReturnItems() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
+        when(itemRepository.findByOwnerOrderByIdAsc(1L)).thenReturn(Collections.singletonList(testItem));
+        when(itemMapper.toItemDto(testItem)).thenReturn(testItemDto);
+
+        var result = itemService.getItemsByOwner(1L);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(1L);
+    }
+
+    @Test
+    void getItemsByOwner_WhenOwnerNotFound_ShouldThrowException() {
+        when(userRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> itemService.getItemsByOwner(99L))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void searchAvailableItems_WithValidText_ShouldReturnItems() {
+        when(itemRepository.searchAvailable("test")).thenReturn(Collections.singletonList(testItem));
+        when(itemMapper.toItemDto(testItem)).thenReturn(testItemDto);
+
+        var result = itemService.searchAvailableItems("test");
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void searchAvailableItems_WithEmptyText_ShouldReturnEmptyList() {
+        var result = itemService.searchAvailableItems("");
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void searchAvailableItems_WithNullText_ShouldReturnEmptyList() {
+        var result = itemService.searchAvailableItems(null);
         assertThat(result).isEmpty();
     }
 }

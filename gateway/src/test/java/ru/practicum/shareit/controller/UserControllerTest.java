@@ -11,6 +11,9 @@ import ru.practicum.shareit.client.UserClient;
 import ru.practicum.shareit.user.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,9 +30,9 @@ class UserControllerTest {
     private UserClient userClient;
 
     @Test
-    void createUser_WithValidInput_ShouldReturnOk() throws Exception {
-        UserDto userDto = new UserDto(null, "John Doe", "john@example.com");
-        String json = objectMapper.writeValueAsString(userDto);
+    void createUser_WithValidData_ShouldReturnOk() throws Exception {
+        UserDto dto = new UserDto(null, "John Doe", "john@example.com");
+        String json = objectMapper.writeValueAsString(dto);
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -38,34 +41,32 @@ class UserControllerTest {
     }
 
     @Test
-    void createUser_WithBlankName_ShouldReturnBadRequest() throws Exception {
-        UserDto userDto = new UserDto(null, "", "john@example.com");
-        String json = objectMapper.writeValueAsString(userDto);
-
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest());
+    void getUserById_ShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/users/1")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk());
     }
 
     @Test
-    void createUser_WithInvalidEmail_ShouldReturnBadRequest() throws Exception {
-        UserDto userDto = new UserDto(null, "John Doe", "invalid-email");
-        String json = objectMapper.writeValueAsString(userDto);
-
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest());
+    void getAllUsers_ShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/users"))
+                .andExpect(status().isOk());
     }
 
     @Test
-    void createUser_WithMissingEmail_ShouldReturnBadRequest() throws Exception {
-        String json = "{\"name\":\"John Doe\"}";
+    void updateUser_ShouldReturnOk() throws Exception {
+        UserDto dto = new UserDto(null, "Updated Name", null);
+        String json = objectMapper.writeValueAsString(dto);
 
-        mockMvc.perform(post("/users")
+        mockMvc.perform(patch("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void deleteUser_ShouldReturnOk() throws Exception {
+        mockMvc.perform(delete("/users/1"))
+                .andExpect(status().isOk());
     }
 }

@@ -74,4 +74,20 @@ class ItemRequestControllerTest {
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void getAllRequests_WithDefaultParams_ShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/requests/all")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllRequests_WithCustomParams_ShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/requests/all")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("from", "5")
+                        .param("size", "20"))
+                .andExpect(status().isOk());
+    }
 }

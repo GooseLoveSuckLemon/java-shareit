@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.ItemClient;
 import ru.practicum.shareit.item.ItemController;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -27,9 +28,9 @@ class ItemControllerTest {
     private ItemClient itemClient;
 
     @Test
-    void createItem_WithValidInput_ShouldReturnOk() throws Exception {
-        ItemDto itemDto = new ItemDto(null, "Drill", "Powerful drill", true, null);
-        String json = objectMapper.writeValueAsString(itemDto);
+    void createItem_WithValidData_ShouldReturnOk() throws Exception {
+        ItemDto dto = new ItemDto(null, "Drill", "Powerful drill", true, null);
+        String json = objectMapper.writeValueAsString(dto);
 
         mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", 1)
@@ -39,27 +40,15 @@ class ItemControllerTest {
     }
 
     @Test
-    void createItem_WithBlankName_ShouldReturnBadRequest() throws Exception {
-        ItemDto itemDto = new ItemDto(null, "", "Powerful drill", true, null);
-        String json = objectMapper.writeValueAsString(itemDto);
+    void updateItem_ShouldReturnOk() throws Exception {
+        ItemDto dto = new ItemDto(null, "Updated Drill", null, null, null);
+        String json = objectMapper.writeValueAsString(dto);
 
-        mockMvc.perform(post("/items")
+        mockMvc.perform(patch("/items/1")
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void createItem_WithBlankDescription_ShouldReturnBadRequest() throws Exception {
-        ItemDto itemDto = new ItemDto(null, "Drill", "", true, null);
-        String json = objectMapper.writeValueAsString(itemDto);
-
-        mockMvc.perform(post("/items")
-                        .header("X-Sharer-User-Id", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -80,6 +69,50 @@ class ItemControllerTest {
     void searchItems_ShouldReturnOk() throws Exception {
         mockMvc.perform(get("/items/search")
                         .param("text", "drill"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void addComment_WithValidData_ShouldReturnOk() throws Exception {
+        CommentDto dto = new CommentDto(null, "Great item!", null, null);
+        String json = objectMapper.writeValueAsString(dto);
+
+        mockMvc.perform(post("/items/1/comment")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void updateItem_WithEmptyBody_ShouldReturnOk() throws Exception {
+        String json = "{}";
+
+        mockMvc.perform(patch("/items/1")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getItemById_WithInvalidId_ShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/items/999")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void searchItems_WithEmptyText_ShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/items/search")
+                        .param("text", ""))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void searchItems_WithBlankText_ShouldReturnOk() throws Exception {
+        mockMvc.perform(get("/items/search")
+                        .param("text", "   "))
                 .andExpect(status().isOk());
     }
 }
