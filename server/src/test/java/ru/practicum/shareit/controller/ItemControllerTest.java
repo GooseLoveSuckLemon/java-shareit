@@ -1,0 +1,83 @@
+package ru.practicum.shareit.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.item.ItemController;
+import ru.practicum.shareit.item.ItemService;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
+
+import java.util.Collections;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(ItemController.class)
+class ItemControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private ItemService itemService;
+
+    @Test
+    void createItem_ShouldReturnItem() throws Exception {
+        ItemDto inputDto = new ItemDto(null, "Drill", "Powerful drill", true, null);
+        ItemDto outputDto = new ItemDto(1L, "Drill", "Powerful drill", true, null);
+
+        when(itemService.createItem(eq(1L), any(ItemDto.class))).thenReturn(outputDto);
+
+        mockMvc.perform(post("/items")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(inputDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("Drill"));
+    }
+
+    @Test
+    void getItemById_ShouldReturnItem() throws Exception {
+        ItemWithBookingsDto dto = new ItemWithBookingsDto();
+        dto.setId(1L);
+        dto.setName("Drill");
+
+        when(itemService.getItemWithBookingsAndComments(eq(1L), eq(1L))).thenReturn(dto);
+
+        mockMvc.perform(get("/items/1")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1));
+    }
+
+    @Test
+    void getItemsByOwner_ShouldReturnList() throws Exception {
+        when(itemService.getItemsWithBookingsAndCommentsByOwner(1L))
+                .thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/items")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void searchItems_ShouldReturnList() throws Exception {
+        when(itemService.searchAvailableItems("drill"))
+                .thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/items/search")
+                        .param("text", "drill"))
+                .andExpect(status().isOk());
+    }
+}
