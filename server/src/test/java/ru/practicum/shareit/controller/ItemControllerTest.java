@@ -119,4 +119,64 @@ class ItemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text").value("Great item!"));
     }
+
+    @Test
+    void createItem_WithRequestId_ShouldReturnItem() throws Exception {
+        ItemDto dto = new ItemDto(null, "Drill", "Powerful drill", true, 1L);
+        String json = objectMapper.writeValueAsString(dto);
+
+        when(itemService.createItem(eq(1L), any(ItemDto.class))).thenReturn(dto);
+
+        mockMvc.perform(post("/items")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getItemById_WithBookings_ShouldReturnItemWithBookings() throws Exception {
+        ItemWithBookingsDto dto = new ItemWithBookingsDto();
+        dto.setId(1L);
+        dto.setName("Drill");
+
+        when(itemService.getItemWithBookingsAndComments(1L, 1L)).thenReturn(dto);
+
+        mockMvc.perform(get("/items/1")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getItemsByOwner_WithEmptyList_ShouldReturnEmpty() throws Exception {
+        when(itemService.getItemsWithBookingsAndCommentsByOwner(1L))
+                .thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/items")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void searchItems_WithSpecialCharacters_ShouldReturnOk() throws Exception {
+        when(itemService.searchAvailableItems("drill&hammer")).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/items/search")
+                        .param("text", "drill&hammer"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void addComment_WithValidText_ShouldReturnComment() throws Exception {
+        CommentDto dto = new CommentDto(null, "Great item!", null, null);
+        String json = objectMapper.writeValueAsString(dto);
+
+        when(itemService.addComment(eq(1L), eq(1L), any(CommentDto.class))).thenReturn(dto);
+
+        mockMvc.perform(post("/items/1/comment")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+    }
 }

@@ -15,7 +15,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AllGatewayDtosTest {
+class GatewayDtoTest {
 
     @Test
     void testUserDtoAllArgsConstructor() {
@@ -130,5 +130,31 @@ class AllGatewayDtosTest {
         dto.setCreated(LocalDateTime.now());
         assertThat(dto.getId()).isEqualTo(1L);
         assertThat(dto.getText()).isEqualTo("Great!");
+    }
+
+    @Test
+    void testUserDto() {
+        UserDto dto = new UserDto(1L, "John", "john@example.com");
+        assertThat(dto.getId()).isEqualTo(1L);
+        assertThat(dto.getName()).isEqualTo("John");
+        assertThat(dto.getEmail()).isEqualTo("john@example.com");
+    }
+
+    @Test
+    void testItemDto() {
+        ItemDto dto = new ItemDto(1L, "Drill", "Powerful", true, 1L);
+        assertThat(dto.getId()).isEqualTo(1L);
+        assertThat(dto.getName()).isEqualTo("Drill");
+        assertThat(dto.getAvailable()).isTrue();
+    }
+
+    @Test
+    void testBookingDto() {
+        BookerDto booker = new BookerDto(1L, "John");
+        ItemForBookingDto item = new ItemForBookingDto(1L, "Drill");
+        BookingDto dto = new BookingDto(1L, LocalDateTime.now(), LocalDateTime.now().plusDays(1),
+                BookingStatus.WAITING, booker, item);
+        assertThat(dto.getId()).isEqualTo(1L);
+        assertThat(dto.getStatus()).isEqualTo(BookingStatus.WAITING);
     }
 }

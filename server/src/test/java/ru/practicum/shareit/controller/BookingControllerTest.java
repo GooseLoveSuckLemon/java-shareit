@@ -111,4 +111,35 @@ class BookingControllerTest {
                         .param("state", "FUTURE"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void getAllBookings_WithAllStates() throws Exception {
+        BookingState[] states = {BookingState.ALL, BookingState.CURRENT, BookingState.FUTURE,
+                BookingState.PAST, BookingState.WAITING, BookingState.REJECTED};
+
+        for (BookingState state : states) {
+            when(bookingService.getBookingsByBooker(eq(1L), eq(state)))
+                    .thenReturn(Collections.emptyList());
+
+            mockMvc.perform(get("/bookings")
+                            .header("X-Sharer-User-Id", 1)
+                            .param("state", state.name()))
+                    .andExpect(status().isOk());
+        }
+    }
+
+    @Test
+    void getBookingsByOwner_WithAllStates() throws Exception {
+        BookingState[] states = {BookingState.ALL, BookingState.CURRENT, BookingState.FUTURE, BookingState.PAST};
+
+        for (BookingState state : states) {
+            when(bookingService.getBookingsByOwner(eq(1L), eq(state)))
+                    .thenReturn(Collections.emptyList());
+
+            mockMvc.perform(get("/bookings/owner")
+                            .header("X-Sharer-User-Id", 1)
+                            .param("state", state.name()))
+                    .andExpect(status().isOk());
+        }
+    }
 }
