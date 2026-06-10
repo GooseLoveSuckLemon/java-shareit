@@ -89,4 +89,26 @@ class BookingControllerTest {
                         .param("approved", "true"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void getBookingsByOwner_ShouldReturnList() throws Exception {
+        when(bookingService.getBookingsByOwner(eq(1L), any(BookingState.class)))
+                .thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/bookings/owner")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "ALL"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getBookingsByOwner_WithFutureState_ShouldReturnList() throws Exception {
+        when(bookingService.getBookingsByOwner(eq(1L), eq(BookingState.FUTURE)))
+                .thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/bookings/owner")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "FUTURE"))
+                .andExpect(status().isOk());
+    }
 }

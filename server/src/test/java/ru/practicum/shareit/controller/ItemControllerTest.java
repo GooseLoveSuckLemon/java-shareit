@@ -80,4 +80,41 @@ class ItemControllerTest {
                         .param("text", "drill"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void updateItem_ShouldReturnUpdatedItem() throws Exception {
+        ItemDto updateDto = new ItemDto();
+        updateDto.setName("Updated Drill");
+
+        ItemDto outputDto = new ItemDto(1L, "Updated Drill", "Powerful drill", true, null);
+
+        when(itemService.updateItem(eq(1L), eq(1L), any(ItemDto.class))).thenReturn(outputDto);
+
+        mockMvc.perform(patch("/items/1")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Updated Drill"));
+    }
+
+    @Test
+    void addComment_ShouldReturnComment() throws Exception {
+        CommentDto inputDto = new CommentDto();
+        inputDto.setText("Great item!");
+
+        CommentDto outputDto = new CommentDto();
+        outputDto.setId(1L);
+        outputDto.setText("Great item!");
+        outputDto.setAuthorName("User");
+
+        when(itemService.addComment(eq(1L), eq(1L), any(CommentDto.class))).thenReturn(outputDto);
+
+        mockMvc.perform(post("/items/1/comment")
+                        .header("X-Sharer-User-Id", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(inputDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.text").value("Great item!"));
+    }
 }
