@@ -5,7 +5,6 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 
 @Component
 public class ItemRequestMapper {
