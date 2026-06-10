@@ -11,13 +11,33 @@ class BookingRequestDtoTest {
 
     @Test
     void testGettersAndSetters() {
+        LocalDateTime start = LocalDateTime.now().plusDays(1);
+        LocalDateTime end = start.plusDays(1);
+
         BookingRequestDto dto = new BookingRequestDto();
         dto.setItemId(1L);
-        dto.setStart(LocalDateTime.now().plusDays(1));
-        dto.setEnd(LocalDateTime.now().plusDays(2));
+        dto.setStart(start);
+        dto.setEnd(end);
 
         assertThat(dto.getItemId()).isEqualTo(1L);
-        assertThat(dto.getStart()).isNotNull();
-        assertThat(dto.getEnd()).isNotNull();
+        assertThat(dto.getStart()).isEqualTo(start);
+        assertThat(dto.getEnd()).isEqualTo(end);
+    }
+
+    @Test
+    void testAllArgsConstructor() {
+        LocalDateTime start = LocalDateTime.now().plusDays(1);
+        LocalDateTime end = start.plusDays(1);
+        BookingRequestDto dto = new BookingRequestDto(1L, start, end);
+
+        assertThat(dto.getItemId()).isEqualTo(1L);
+        assertThat(dto.getStart()).isEqualTo(start);
+        assertThat(dto.getEnd()).isEqualTo(end);
+    }
+
+    @Test
+    void testNoArgsConstructor() {
+        BookingRequestDto dto = new BookingRequestDto();
+        assertThat(dto).isNotNull();
     }
 }

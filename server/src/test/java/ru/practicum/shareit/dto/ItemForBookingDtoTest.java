@@ -23,4 +23,10 @@ class ItemForBookingDtoTest {
         assertThat(dto.getId()).isEqualTo(1L);
         assertThat(dto.getName()).isEqualTo("Drill");
     }
+
+    @Test
+    void testNoArgsConstructor() {
+        ItemForBookingDto dto = new ItemForBookingDto();
+        assertThat(dto).isNotNull();
+    }
 }
