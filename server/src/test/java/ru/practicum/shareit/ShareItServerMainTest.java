@@ -8,7 +8,6 @@ class ShareItServerMainTest {
 
     @Test
     void contextLoads() {
-        // Проверка загрузки контекста
     }
 
     @Test

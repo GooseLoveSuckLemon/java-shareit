@@ -137,6 +137,17 @@ class ItemRequestServiceTest {
     }
 
     @Test
+    void createRequest_WithNullDescription_ShouldThrowException() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(requestor));
+
+        ItemRequestDto invalidDto = new ItemRequestDto();
+        invalidDto.setDescription(null);
+
+        assertThatThrownBy(() -> requestService.createRequest(1L, invalidDto))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
     void getRequestById_ShouldReturnRequest_WhenExists() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(requestor));
         when(itemRequestRepository.findById(1L)).thenReturn(Optional.of(testRequest));
@@ -239,5 +250,36 @@ class ItemRequestServiceTest {
         assertThatThrownBy(() -> requestService.getAllRequests(99L, 0, 10))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("не найден");
+    }
+
+    @Test
+    void getAllRequests_WithPagination_ShouldReturnPaginatedResults() {
+        List<ItemRequest> allRequests = List.of(testRequest, otherRequest);
+
+        when(userRepository.findById(2L)).thenReturn(Optional.of(otherUser));
+        when(itemRequestRepository.findAll()).thenReturn(allRequests);
+        when(itemRequestMapper.toDto(testRequest)).thenReturn(testRequestDto);
+        when(itemRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<ItemRequestDto> result = requestService.getAllRequests(2L, 0, 2);
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void getOwnRequests_WithItems_ShouldPopulateItems() {
+        List<ItemRequest> allRequests = List.of(testRequest);
+        List<Item> itemsWithRequests = List.of(itemWithRequest);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(requestor));
+        when(itemRequestRepository.findAll()).thenReturn(allRequests);
+        when(itemRepository.findAll()).thenReturn(itemsWithRequests);
+        when(itemRequestMapper.toDto(testRequest)).thenReturn(testRequestDto);
+        when(itemMapper.toItemDto(itemWithRequest)).thenReturn(itemDto);
+
+        List<ItemRequestDto> result = requestService.getOwnRequests(1L);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getItems()).hasSize(1);
     }
 }
