@@ -112,4 +112,19 @@ class ItemRequestControllerTest {
                         .param("size", "0"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void getAllRequests_WithDefaultFromAndSize_ShouldWork() throws Exception {
+        mockMvc.perform(get("/requests/all")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllRequests_WithFromButNoSize_ShouldUseDefault() throws Exception {
+        mockMvc.perform(get("/requests/all")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("from", "5"))
+                .andExpect(status().isOk());
+    }
 }

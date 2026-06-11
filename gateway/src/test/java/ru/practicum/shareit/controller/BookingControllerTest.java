@@ -232,4 +232,31 @@ class BookingControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    void getAllBookings_WithAllStateParam_ShouldWork() throws Exception {
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "ALL")
+                        .param("from", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getBookingsByOwner_WithRejectedState_ShouldWork() throws Exception {
+        mockMvc.perform(get("/bookings/owner")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "REJECTED")
+                        .param("from", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getBookingsByOwner_WithDefaultParams_ShouldWork() throws Exception {
+        mockMvc.perform(get("/bookings/owner")
+                        .header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk());
+    }
+
 }
