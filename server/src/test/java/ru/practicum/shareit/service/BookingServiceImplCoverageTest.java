@@ -15,6 +15,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
@@ -82,7 +83,7 @@ class BookingServiceImplCoverageTest {
 
     @Test
     void createBooking_WhenDatesEqual_ShouldThrowException() {
-        // Моки не нужны - валидация дат происходит первой
+        // ⚠️ НЕТ МОКОВ! Валидация дат происходит первой
         requestDto.setStart(LocalDateTime.now().plusDays(1));
         requestDto.setEnd(LocalDateTime.now().plusDays(1));
 
@@ -100,7 +101,7 @@ class BookingServiceImplCoverageTest {
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining("не может быть в прошлом");
     }
-
+    
     @Test
     void getBookingsByBooker_WithEmptyState_ShouldReturnEmpty() {
         when(userRepository.findById(2L)).thenReturn(Optional.of(booker));
