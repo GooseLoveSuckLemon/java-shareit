@@ -46,7 +46,17 @@ class GatewayFullCoverageTest {
     @MockBean
     private UserClient userClient;
 
-    // BookingController tests
+    @Test
+    void contextLoads() {
+        // Проверка загрузки контекста Spring
+    }
+
+    @Test
+    void mainMethodStarts() {
+        ShareItGateway.main(new String[]{});
+    }
+
+        // BookingController tests
     @Test
     void bookingController_GetBookings_WithAllStates() throws Exception {
         String[] states = {"ALL", "CURRENT", "FUTURE", "PAST", "WAITING", "REJECTED"};
