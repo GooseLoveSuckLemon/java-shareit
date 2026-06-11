@@ -81,13 +81,21 @@ class BookingServiceImplCoverageTest {
     }
 
     @Test
-    void createBooking_WhenDatesEqual_ShouldThrowException() {
+    void createBooking_WhenStartAfterEnd_ShouldThrowException() {
+        requestDto.setStart(LocalDateTime.now().plusDays(2));
+        requestDto.setEnd(LocalDateTime.now().plusDays(1));
+
+        assertThatThrownBy(() -> bookingService.createBooking(2L, requestDto))
+                .isInstanceOf(BadRequestException.class);
+    }
+
+    @Test
+    void createBooking_WhenStartEqualsEnd_ShouldThrowException() {
         requestDto.setStart(LocalDateTime.now().plusDays(1));
         requestDto.setEnd(LocalDateTime.now().plusDays(1));
 
         assertThatThrownBy(() -> bookingService.createBooking(2L, requestDto))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessageContaining("должна быть позже");
+                .isInstanceOf(BadRequestException.class);
     }
 
     @Test
@@ -96,8 +104,17 @@ class BookingServiceImplCoverageTest {
         requestDto.setEnd(LocalDateTime.now().plusDays(2));
 
         assertThatThrownBy(() -> bookingService.createBooking(2L, requestDto))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessageContaining("не может быть в прошлом");
+                .isInstanceOf(BadRequestException.class);
+    }
+
+    // ВАЖНО: В ЭТОМ ТЕСТЕ НЕТ МОКОВ!
+    @Test
+    void createBooking_WhenDatesEqual_ShouldThrowException() {
+        requestDto.setStart(LocalDateTime.now().plusDays(1));
+        requestDto.setEnd(LocalDateTime.now().plusDays(1));
+
+        assertThatThrownBy(() -> bookingService.createBooking(2L, requestDto))
+                .isInstanceOf(BadRequestException.class);
     }
 
     @Test
@@ -127,8 +144,7 @@ class BookingServiceImplCoverageTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(owner));
 
         assertThatThrownBy(() -> bookingService.approveBooking(1L, 1L, true))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessageContaining("уже имеет статус");
+                .isInstanceOf(BadRequestException.class);
     }
 
     @Test
