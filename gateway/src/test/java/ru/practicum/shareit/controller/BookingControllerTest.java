@@ -265,7 +265,7 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk());
     }
-    
+
     @Test
     void createBooking_ShouldReturnBooking() throws Exception {
         BookItemRequestDto request = new BookItemRequestDto(1L, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2));
