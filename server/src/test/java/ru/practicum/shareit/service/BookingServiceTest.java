@@ -98,6 +98,8 @@ class BookingServiceTest {
         bookingDto.setId(1L);
     }
 
+    // ==================== ТЕСТЫ ВАЛИДАЦИИ ДАТ ====================
+
     @Test
     void createBooking_WhenStartAfterEnd_ShouldThrowException() {
         requestDto.setStart(LocalDateTime.now().plusDays(2));
@@ -127,6 +129,8 @@ class BookingServiceTest {
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining("не может быть в прошлом");
     }
+
+    // ==================== ТЕСТЫ УСПЕШНОГО СОЗДАНИЯ ====================
 
     @Test
     void createBooking_WhenUserNotFound_ShouldThrowException() {
@@ -181,6 +185,8 @@ class BookingServiceTest {
         assertThat(result.getId()).isEqualTo(1L);
     }
 
+    // ==================== ТЕСТЫ ПОДТВЕРЖДЕНИЯ БРОНИРОВАНИЯ ====================
+
     @Test
     void approveBooking_WhenBookingNotFound_ShouldThrowException() {
         when(bookingRepository.findById(1L)).thenReturn(Optional.empty());
@@ -188,6 +194,26 @@ class BookingServiceTest {
         assertThatThrownBy(() -> bookingService.approveBooking(1L, 1L, true))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Бронирование");
+    }
+
+    @Test
+    void approveBooking_WhenUserNotFound_ShouldThrowException() {
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+        when(userRepository.findById(3L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> bookingService.approveBooking(1L, 3L, true))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Пользователь");
+    }
+
+    @Test
+    void approveBooking_WhenUserNotOwner_ShouldThrowException() {
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+        when(userRepository.findById(3L)).thenReturn(Optional.of(otherUser));
+
+        assertThatThrownBy(() -> bookingService.approveBooking(1L, 3L, true))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("владелец");
     }
 
     @Test
@@ -238,6 +264,17 @@ class BookingServiceTest {
         assertThat(booking.getStatus()).isEqualTo(BookingStatus.REJECTED);
     }
 
+    // ==================== ТЕСТЫ ПОЛУЧЕНИЯ БРОНИРОВАНИЯ ПО ID ====================
+
+    @Test
+    void getBookingById_WhenBookingNotFound_ShouldThrowException() {
+        when(bookingRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> bookingService.getBookingById(1L, 1L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Бронирование");
+    }
+
     @Test
     void getBookingById_WhenUserNotFound_ShouldThrowException() {
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
@@ -246,6 +283,28 @@ class BookingServiceTest {
         assertThatThrownBy(() -> bookingService.getBookingById(1L, 1L))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining("Пользователь");
+    }
+
+    @Test
+    void getBookingById_WhenUserNotBookerOrOwner_ShouldThrowException() {
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+        when(userRepository.findById(3L)).thenReturn(Optional.of(otherUser));
+
+        assertThatThrownBy(() -> bookingService.getBookingById(1L, 3L))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining("Только");
+    }
+
+    @Test
+    void getBookingById_WhenUserIsBooker_ShouldReturnBookingDto() {
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(booker));
+        when(bookingMapper.toBookingDto(booking)).thenReturn(bookingDto);
+
+        BookingDto result = bookingService.getBookingById(1L, 2L);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
     }
 
     @Test
@@ -259,6 +318,8 @@ class BookingServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(1L);
     }
+
+    // ==================== ТЕСТЫ ПОЛУЧЕНИЯ СПИСКОВ БРОНИРОВАНИЙ ====================
 
     @Test
     void getBookingsByBooker_WhenUserNotFound_ShouldThrowException() {
