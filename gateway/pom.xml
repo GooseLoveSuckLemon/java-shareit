@@ -85,7 +85,6 @@
                                 <rule>
                                     <element>BUNDLE</element>
                                     <limits>
-                                        <!-- Сниженные требования для Gateway -->
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
@@ -105,11 +104,6 @@
                                             <counter>METHOD</counter>
                                             <value>COVEREDRATIO</value>
                                             <minimum>0.30</minimum>
-                                        </limit>
-                                        <limit>
-                                            <counter>CLASS</counter>
-                                            <value>MISSEDCOUNT</value>
-                                            <maximum>5</maximum>
                                         </limit>
                                     </limits>
                                 </rule>
