@@ -26,7 +26,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -82,7 +82,7 @@ class BookingServiceImplCoverageTest {
 
     @Test
     void createBooking_WhenDatesEqual_ShouldThrowException() {
-        // Все моки удалены. Валидация дат происходит до обращения к БД.
+        // Моки не нужны - валидация дат происходит первой
         requestDto.setStart(LocalDateTime.now().plusDays(1));
         requestDto.setEnd(LocalDateTime.now().plusDays(1));
 
