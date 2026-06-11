@@ -127,4 +127,17 @@ class ItemRequestControllerTest {
                         .param("from", "5"))
                 .andExpect(status().isOk());
     }
+
+
+    @Test
+    void createRequest_ShouldValidateInput() throws Exception {
+        ItemRequestDto input = new ItemRequestDto();
+        input.setDescription("");
+
+        mockMvc.perform(post("/requests")
+                        .header("X-Sharer-User-Id", "1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"description\":\"\"}"))
+                .andExpect(status().isBadRequest());
+    }
 }
