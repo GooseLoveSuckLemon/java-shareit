@@ -98,8 +98,6 @@ class BookingServiceTest {
         bookingDto.setId(1L);
     }
 
-    // ==================== ТЕСТЫ ВАЛИДАЦИИ ДАТ ====================
-
     @Test
     void createBooking_WhenStartAfterEnd_ShouldThrowException() {
         requestDto.setStart(LocalDateTime.now().plusDays(2));
@@ -126,8 +124,6 @@ class BookingServiceTest {
         assertThatThrownBy(() -> bookingService.createBooking(2L, requestDto))
                 .isInstanceOf(BadRequestException.class);
     }
-
-    // ==================== ТЕСТЫ УСПЕШНОГО СОЗДАНИЯ ====================
 
     @Test
     void createBooking_WhenUserNotFound_ShouldThrowException() {
@@ -177,8 +173,6 @@ class BookingServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(1L);
     }
-
-    // ==================== ТЕСТЫ ПОДТВЕРЖДЕНИЯ БРОНИРОВАНИЯ ====================
 
     @Test
     void approveBooking_WhenBookingNotFound_ShouldThrowException() {
@@ -252,8 +246,6 @@ class BookingServiceTest {
         assertThat(booking.getStatus()).isEqualTo(BookingStatus.REJECTED);
     }
 
-    // ==================== ТЕСТЫ ПОЛУЧЕНИЯ БРОНИРОВАНИЯ ПО ID ====================
-
     @Test
     void getBookingById_WhenBookingNotFound_ShouldThrowException() {
         when(bookingRepository.findById(1L)).thenReturn(Optional.empty());
@@ -291,8 +283,6 @@ class BookingServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(1L);
     }
-
-    // ==================== ТЕСТЫ ПОЛУЧЕНИЯ СПИСКОВ БРОНИРОВАНИЙ ====================
 
     @Test
     void getBookingsByBooker_WhenUserNotFound_ShouldThrowException() {
