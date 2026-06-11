@@ -82,22 +82,17 @@ class BookingServiceImplCoverageTest {
 
     @Test
     void createBooking_WhenDatesEqual_ShouldThrowException() {
-        when(userRepository.findById(2L)).thenReturn(Optional.of(booker));
-        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-
+        // Моки не нужны - валидация дат происходит первой
         requestDto.setStart(LocalDateTime.now().plusDays(1));
         requestDto.setEnd(LocalDateTime.now().plusDays(1));
 
         assertThatThrownBy(() -> bookingService.createBooking(2L, requestDto))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessageContaining("позже");
+                .hasMessageContaining("должна быть позже");
     }
 
     @Test
     void createBooking_WhenStartInPast_ShouldThrowException() {
-        when(userRepository.findById(2L)).thenReturn(Optional.of(booker));
-        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-
         requestDto.setStart(LocalDateTime.now().minusDays(1));
         requestDto.setEnd(LocalDateTime.now().plusDays(2));
 

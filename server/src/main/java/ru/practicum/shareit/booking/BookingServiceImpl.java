@@ -33,45 +33,35 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDto createBooking(Long userId, BookingRequestDto bookingRequestDto) {
-        User booker = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id " + userId + " не найден"));
-
-        Item item = itemRepository.findById(bookingRequestDto.getItemId())
-                .orElseThrow(() -> new NotFoundException("Вещь с id " + bookingRequestDto.getItemId() + " не найдена"));
-
-        if (!item.getAvailable()) {
-            throw new BadRequestException("Вещь с id " + item.getId() + " недоступна для бронирования");
+    public BookingDto createBooking(Long userId, BookingRequestDto requestDto) {
+        if (requestDto.getStart().isAfter(requestDto.getEnd()) || requestDto.getStart().equals(requestDto.getEnd())) {
+            throw new BadRequestException("Дата начала должна быть позже даты окончания");
         }
+        if (requestDto.getStart().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Дата начала не может быть в прошлом");
+        }
+
+        User booker = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+        Item item = itemRepository.findById(requestDto.getItemId())
+                .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
 
         if (item.getOwner().equals(userId)) {
             throw new NotFoundException("Владелец не может бронировать свою вещь");
         }
-
-        if (bookingRequestDto.getStart().isAfter(bookingRequestDto.getEnd()) ||
-                bookingRequestDto.getStart().equals(bookingRequestDto.getEnd())) {
-            throw new BadRequestException("Дата окончания должна быть позже даты начала");
-        }
-
-        if (bookingRequestDto.getStart().isBefore(LocalDateTime.now())) {
-            throw new BadRequestException("Дата начала не может быть в прошлом");
-        }
-
-        if (bookingRequestDto.getEnd().isBefore(LocalDateTime.now())) {
-            throw new BadRequestException("Дата окончания не может быть в прошлом");
+        if (!item.getAvailable()) {
+            throw new BadRequestException("Вещь недоступна для бронирования");
         }
 
         Booking booking = new Booking();
-        booking.setStart(bookingRequestDto.getStart());
-        booking.setEnd(bookingRequestDto.getEnd());
+        booking.setStart(requestDto.getStart());
+        booking.setEnd(requestDto.getEnd());
         booking.setItem(item);
         booking.setBooker(booker);
         booking.setStatus(BookingStatus.WAITING);
 
         Booking savedBooking = bookingRepository.save(booking);
-        log.info("Создано бронирование {} для вещи {} пользователем {}",
-                savedBooking.getId(), item.getId(), userId);
-
         return bookingMapper.toBookingDto(savedBooking);
     }
 

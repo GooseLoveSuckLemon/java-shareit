@@ -124,35 +124,33 @@ class BookingServiceTest {
     }
 
     @Test
-    void createBooking_WhenStartAfterEnd_ShouldThrowException() {
-        requestDto.setStart(LocalDateTime.now().plusDays(2));
-        requestDto.setEnd(LocalDateTime.now().plusDays(1));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(booker));
-        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-
-        assertThatThrownBy(() -> bookingService.createBooking(2L, requestDto))
-                .isInstanceOf(BadRequestException.class)
-                .hasMessageContaining("позже");
-    }
-
-    @Test
     void createBooking_WhenStartEqualsEnd_ShouldThrowException() {
         requestDto.setStart(LocalDateTime.now().plusDays(1));
         requestDto.setEnd(LocalDateTime.now().plusDays(1));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(booker));
-        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
+        // Не нужно стейблить репозитории, так как проверка даты происходит первой
         assertThatThrownBy(() -> bookingService.createBooking(2L, requestDto))
                 .isInstanceOf(BadRequestException.class)
-                .hasMessageContaining("позже");
+                .hasMessageContaining("должна быть позже");
+    }
+
+    @Test
+    void createBooking_WhenStartAfterEnd_ShouldThrowException() {
+        requestDto.setStart(LocalDateTime.now().plusDays(2));
+        requestDto.setEnd(LocalDateTime.now().plusDays(1));
+
+        // Удалите стейблинги userRepository и itemRepository
+        assertThatThrownBy(() -> bookingService.createBooking(2L, requestDto))
+                .isInstanceOf(BadRequestException.class)
+                .hasMessageContaining("должна быть позже");
     }
 
     @Test
     void createBooking_WhenStartInPast_ShouldThrowException() {
         requestDto.setStart(LocalDateTime.now().minusDays(1));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(booker));
-        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+        requestDto.setEnd(LocalDateTime.now().plusDays(2));
 
+        // Удалите стейблинги userRepository и itemRepository
         assertThatThrownBy(() -> bookingService.createBooking(2L, requestDto))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining("не может быть в прошлом");
