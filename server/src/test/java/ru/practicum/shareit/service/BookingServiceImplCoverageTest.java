@@ -82,7 +82,7 @@ class BookingServiceImplCoverageTest {
 
     @Test
     void createBooking_WhenDatesEqual_ShouldThrowException() {
-        // Моки не нужны - валидация дат происходит первой
+        // Все моки удалены. Валидация дат происходит до обращения к БД.
         requestDto.setStart(LocalDateTime.now().plusDays(1));
         requestDto.setEnd(LocalDateTime.now().plusDays(1));
 

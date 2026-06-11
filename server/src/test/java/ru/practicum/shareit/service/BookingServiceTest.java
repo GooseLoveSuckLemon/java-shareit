@@ -128,7 +128,6 @@ class BookingServiceTest {
         requestDto.setStart(LocalDateTime.now().plusDays(1));
         requestDto.setEnd(LocalDateTime.now().plusDays(1));
 
-        // Не нужно стейблить репозитории, так как проверка даты происходит первой
         assertThatThrownBy(() -> bookingService.createBooking(2L, requestDto))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessageContaining("должна быть позже");
