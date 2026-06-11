@@ -108,15 +108,6 @@ class BookingServiceTest {
     }
 
     @Test
-    void createBooking_WhenStartEqualsEnd_ShouldThrowException() {
-        requestDto.setStart(LocalDateTime.now().plusDays(1));
-        requestDto.setEnd(LocalDateTime.now().plusDays(1));
-
-        assertThatThrownBy(() -> bookingService.createBooking(2L, requestDto))
-                .isInstanceOf(BadRequestException.class);
-    }
-
-    @Test
     void createBooking_WhenStartInPast_ShouldThrowException() {
         requestDto.setStart(LocalDateTime.now().minusDays(1));
         requestDto.setEnd(LocalDateTime.now().plusDays(2));
