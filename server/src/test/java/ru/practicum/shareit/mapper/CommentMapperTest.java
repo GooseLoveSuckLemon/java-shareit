@@ -2,11 +2,11 @@ package ru.practicum.shareit.mapper;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.Comment.CommentMapper;
+import ru.practicum.shareit.Comment.mapper.CommentMapper;
 import ru.practicum.shareit.Comment.dto.CommentDto;
 import ru.practicum.shareit.Comment.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 

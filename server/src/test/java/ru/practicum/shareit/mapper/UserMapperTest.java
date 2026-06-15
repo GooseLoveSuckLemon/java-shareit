@@ -1,8 +1,8 @@
 package ru.practicum.shareit.mapper;
 
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import static org.assertj.core.api.Assertions.assertThat;

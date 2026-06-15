@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookerDto;
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booker.dto.BookerDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.dto.ItemForBookingDto;
 

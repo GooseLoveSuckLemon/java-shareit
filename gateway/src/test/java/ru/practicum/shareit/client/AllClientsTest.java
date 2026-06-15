@@ -6,8 +6,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.client.RestTemplate;
-import ru.practicum.shareit.booking.BookingClient;
-import ru.practicum.shareit.item.ItemClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

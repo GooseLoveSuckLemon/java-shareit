@@ -1,8 +1,8 @@
 package ru.practicum.shareit.entity;
 
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 

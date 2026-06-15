@@ -1,11 +1,11 @@
 package ru.practicum.shareit.dto;
 
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.booking.dto.BookerDto;
+import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booker.dto.BookerDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.ItemForBookingDto;
-import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.dto.UserDto;

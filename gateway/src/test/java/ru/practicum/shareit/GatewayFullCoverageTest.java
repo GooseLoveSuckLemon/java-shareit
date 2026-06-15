@@ -7,17 +7,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.booking.BookingClient;
-import ru.practicum.shareit.booking.BookingController;
+import ru.practicum.shareit.client.BookingClient;
+import ru.practicum.shareit.booking.controller.BookingControllerImpl;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.client.UserClient;
-import ru.practicum.shareit.item.ItemClient;
-import ru.practicum.shareit.item.ItemController;
+import ru.practicum.shareit.client.ItemClient;
+import ru.practicum.shareit.item.controller.ItemControllerImpl;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.request.ItemRequestController;
-import ru.practicum.shareit.request.RequestClient;
+import ru.practicum.shareit.request.controller.ItemRequestControllerImpl;
+import ru.practicum.shareit.client.RequestClient;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.user.UserController;
+import ru.practicum.shareit.user.controller.UserControllerImpl;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ import java.time.LocalDateTime;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest({BookingController.class, ItemController.class, ItemRequestController.class, UserController.class})
+@WebMvcTest({BookingControllerImpl.class, ItemControllerImpl.class, ItemRequestControllerImpl.class, UserControllerImpl.class})
 class GatewayFullCoverageTest {
 
     @Autowired

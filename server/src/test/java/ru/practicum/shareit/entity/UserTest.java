@@ -1,7 +1,7 @@
 package ru.practicum.shareit.entity;
 
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
