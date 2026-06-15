@@ -66,6 +66,6 @@ class ErrorHandlerTest {
 
         Map<String, String> result = errorHandler.handleGeneric(exception);
 
-        assertThat(result).containsEntry("error", "Internal server error");
+        assertThat(result).containsEntry("error", "Internal server error: Unexpected error");
     }
 }

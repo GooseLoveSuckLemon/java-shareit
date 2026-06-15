@@ -36,7 +36,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<Object> update(@PathVariable Long id, @Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody UserDto userDto) {
         log.info("PATCH /users/{} - обновление пользователя: {}", id, userDto);
         return userClient.updateUser(id, userDto);
     }
